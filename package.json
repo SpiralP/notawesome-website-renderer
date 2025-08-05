@@ -1,0 +1,24 @@
+{
+  "name": "notawesome-website-renderer",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "module": "index.ts",
+  "scripts": {
+    "build:dev": "rm -f dist/index.js && bun build --target browser --loader .css:txt --outfile dist/index.js src/index.ts",
+    "build": "npm run build:dev -- --production",
+    "dev": "npm run build:dev -- --watch",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "highlight.js": "^11.11.1",
+    "marked": "^16.1.2",
+    "marked-highlight": "^2.2.2",
+    "strip-indent": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "bun": "1.2.17",
+    "typescript": "^5"
+  }
+}
