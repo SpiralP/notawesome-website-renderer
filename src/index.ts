@@ -1,5 +1,5 @@
 import highlightJs from "highlight.js";
-import highlightJsCss from "highlight.js/styles/a11y-dark.min.css";
+import highlightJsCss from "highlight.js/styles/vs2015.min.css";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import stripIndent from "strip-indent";
