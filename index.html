@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Not Awesome 2 on-line</title>
+    <style>
+      body {
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+        color: #cccccc;
+        background-color: #1f1f1f;
+      }
+      a {
+        color: #3391ff;
+      }
+    </style>
+
+    <script type="module" src="./index.js"></script>
+  </head>
+  <body>
+    <pre>
+      # Welcome to Not Awesome 2 on-line!
+      There is currently only one page of interest:
+      - [Not Awesome Script documentation](docs/nas/)
+
+      *Thank you for using Not Awesome 2 on-line.*
+
+
+      ```nas
+      msg myColor[0] = 255
+      msg myColor[1] = 0
+      msg myColor[2] = 255
+      msg myColor.Length = 3
+      // Indices 0 1 2 correspond to Red Green and Blue respectively.
+      ```
+
+      ```nas
+      using allow_include
+      using cef
+
+      //runArgs: theme to change, url to change to
+      #cef.changeTheme
+          msg cef create -n {runArg1} -glasq {{runArg2}}
+          set {runArg1}.volume {{runArg2}.volume}
+          set {runArg1}.url {{runArg2}}
+      quit
+      //runArgs: theme to change, url to change to
+      #cef.changeThemeBackground
+          msg cef -b create -n {runArg1} -glasq {{runArg2}}
+          set {runArg1}.volume {{runArg2}.volume}
+          set {runArg1}.url {{runArg2}}
+      quit
+      #cef.changeThemeNoLoop
+          msg cef create -n {runArg1} -gasq {{runArg2}}
+          set {runArg1}.volume {{runArg2}.volume}
+      quit
+
+      //runArgs: theme to play
+      #cef.playTheme
+          msg cef speed -n {runArg1} 1
+          msg cef time -n {runArg1} 0
+          set volume {{runArg1}.volume}
+          if volume|=| set volume 1
+          setdiv volume 2
+
+          msg cef volume -n {runArg1} -g {volume}
+          //msg cef resume -n {runArg1}
+      quit
+      #cef.fadeOutTheme
+          msg cef fade {volume} 0 0.5 -n {runArg1}
+          delay 1500
+          msg cef pause -n {runArg1}
+      quit
+      #cef.fadeOutThemeLong
+          msg cef fade {volume} 0 3 -n {runArg1}
+          delay 3000
+          msg cef pause -n {runArg1}
+      quit
+      #cef.stopTheme
+          msg cef pause -n {runArg1}
+      quit
+      ```
+
+      ```nas
+      // This is an example tutorial Not Awesome Script for adventure maps in Not Awesome 2.
+      // Lines that begin with "//" are comments and are ignored when the script runs.
+
+      // You may run scripts by putting /OsScript [#label] into message blocks.
+      // (/oss for short)
+      // Labels are case sensitive and are marked with a # symbol.
+      // A script is a collection of Labels and Actions. The Label tells the script where to begin, and it will start executing the Actions from the label downward.
+
+      // A note about the speed at which scripts can be ran:
+      //  Until a script is done running a given Label, it won't let you run that same Label again.
+      //  This is particularly useful to prevent really ugly chat spam if a player tries to talk to a NPC too fast, for example.
+      //  However, if you really need to, you can add "repeatable" to the end of the /OsScript command to bypass this restriction.
+      //  For example: /OsScript #Amelia repeatable
+
+
+
+
+
+      // ----------------------------------------------------------------------------------------------------------- LESSON 1
+
+      // Let's start with the most basic example of a script. An NPC that speaks to you.
+      // We'll add a label which will be what we put into the command to run this part of the script:
+      #Amelia
+          // Now we could use /oss #Amelia and it would run from here, but it won't do anything until we add some Actions.
+          // Since we want her to speak, we'll use the "msg" Action to display the message we want to see.
+          msg &oAmelia: &xHey there, welcome!
+
+          // We'll use the "delay" Action to pause the script for one second before Amelia sends her next message.
+          delay 1000
+          msg &oAmelia: &xTo get to the rest of the server you'll need to &bfly to the top of the tower &xby using &bhax&x.
+
+          // delay four seconds due to the previous message being longer...
+          delay 4000
+          msg &oAmelia: %bClick the sign %xover there to learn how %bhax %xworks.
+          // Here is an important bit: we need to put the quit Action when we want the label to stop running.
+          // Without the "quit"; script would keep running past #AmeliaSpeechBubble (in lesson 2 below) and start doing Actions we don't expect.
+      quit
+
+      // And there you have it! A fully functional script for a talking NPC.
+      // You may have noticed everything between the Label and "quit" is indented.
+      // This isn't necessary and doesn't matter to the script, but it's a helpful visual aid when you have many labels all in the same script one after another.
+
+
+
+
+
+      // ----------------------------------------------------------------------------------------------------------- LESSON 2
+
+      // Sending messages is all well and good, but if you're trying to learn scripting you probably wanted to do more than that!
+      // Let's introduce the most versatile Action by expanding on the Amelia NPC example.
+      #AmeliaSpeechBubble
+          // Here we'll use the "cmd" Action to run a command. In this case we'll use /tempblock, in order to make the speech bubble above Amelia disappear while she speaks.
+          cmd tempblock air 31 23 20
+          msg &oAmelia: &xHey there, welcome!
+          delay 1000
+          msg &oAmelia: &xTo get to the rest of the server you'll need to &bfly to the top of the tower &xby using &bhax&x.
+          delay 4000
+          msg &oAmelia: %bClick the sign %xover there to learn how %bhax %xworks.
+          // Let's add another delay before the speech bubble re-appears.
+          delay 1000
+          // Now we make the speech bubble reappear when the script is done running.
+          cmd tempblock speech 31 23 20
+      quit
+
+      // Now if you use /mb speech /oss #AmeliaSpeechBubble, you can get NPCs just like the official NA2 ones.
+      // This sucks, though. We have to input the exact coordinates of the message block, and worse, we can't use it in multiple places, and moving it later is a pain.
+      // Let's make this work without having to type exact coords!
+
+
+
+
+
+      // ----------------------------------------------------------------------------------------------------------- LESSON 3
+
+      // Introducing... packages. Or, if you're familiar with programming, variables.
+      // Packages hold values inside of them. The value can be text, a number, or multiple numbers, depending on the circumstance.
+      // They are called variables in the programming world because what's inside them can change (vary) on the fly.
+      // You can create your own packages with your own values inside of them, but for now we're going to use some preset packages that are already filled in with useful values.
+
+      // Here we're going to use a preset package called "MBCoords".
+      // As you might have guessed, this package contains the coordinates of the message block that this script is running from.
+      // In order to use packages in commands (and many other places!) we can use the curly bracket characters { } to unwrap it.
+      #AmeliaPackages
+          // Now when the script runs, this Action will substitute "{MBCoords}" for its actual value, which would look something like "31 23 20"
+          cmd tempblock air {MBCoords}
+          msg &oAmelia: &xHey there, welcome!
+          // Here's another use of a preset package: "msgDelay". Now the script will automatically delay for a period of time based on how long the last msg was.
+          delay msgDelay
+          // delay doesn't require you to unwrap the package with { }, because it can automatically figure out if it's a number or a package that contains a number.
+
+          msg &oAmelia: &xTo get to the rest of the server you'll need to &bfly to the top of the tower &xby using &bhax&x.
+          delay msgDelay
+          msg &oAmelia: %bClick the sign %xover there to learn how %bhax %xworks.
+          // I like to stick with a standard time of 1 second before speech bubbles reappear at the end of a conversation.
+          delay 1000
+          // Ditto
+          cmd tempblock speech {MBCoords}
+      quit
+
+
+
+
+
+      // ----------------------------------------------------------------------------------------------------------- LESSON 4
+
+      // What if we only want to be able to talk to Amelia once?
+      // Introducing... if statements.
+      // If statements are what truly give scripts the edge over normal message blocks.
+      // They work by checking the data inside a package and either doing an Action, or doing nothing, depending on the contents.
+      // The simplest version of an if statement works like this: if [package] [Action]
+      // If the package has a value of "true", then the [Action] is performed. Otherwise, the Action will not be performed.
+
+      #AmeliaIf
+          // Here we are using a package called hasTalkedToAmelia. By default, it has no value.
+          // Thus, the first time the we talk to Amelia, script will not run the "quit" Action.
+          if hasTalkedToAmelia quit
+          // Notice that because the if statement already expects a package as the first argument, we should not unwrap it with { }.
+
+          // Here is a new Action: "set". It works like so: set [package] [value]
+          set hasTalkedToAmelia true
+          // Now the first time you talk to Amelia, hasTalkedToAmelia gets the value of "true", which means any subsequent time we try to talk to her, it will run the quit Action above.
+          // IMPORTANT NOTE: Packages reset if you change maps. There is no way to permanently save values for os scripts. Sorry!
+
+          cmd tempblock air {MBCoords}
+          msg &oAmelia: &xI'm not going to talk to you again.
+          // We can just leave the speech bubble gone because you can't talk to her again anyway.
+      quit
+
+
+
+
+
+      // ----------------------------------------------------------------------------------------------------------- LESSON 5
+
+      // What if we want Amelia to say something new after we talk to her once, instead of just becoming silent?
+
+      #AmeliaGoto
+          // Here is a new Action: "jump".
+          // Now any subsequent time we talk to Amelia, the script will go to the label #AmeliaTrouble and run the Actions there instead.
+          // This Action can be used outside of an if statement, but it is most useful when paired with one.
+          if hasTalkedToAmelia jump #AmeliaTrouble
+          set hasTalkedToAmelia true
+
+
+          cmd tempblock air {MBCoords}
+          msg &oAmelia: &xHey there, welcome!
+          delay msgDelay
+          msg &oAmelia: &xTo get to the rest of the server you'll need to &bfly to the top of the tower &xby using &bhax&x.
+          delay msgDelay
+          msg &oAmelia: %bClick the sign %xover there to learn how %bhax %xworks.
+          delay 1000
+          cmd tempblock speech {MBCoords}
+      quit
+
+      #AmeliaTrouble
+          cmd tempblock air {MBCoords}
+          msg &oAmelia: &xHaving trouble beating tutmain? Damn, that's crazy. Good luck tho
+          delay 1000
+          cmd tempblock speech {MBCoords}
+      quit
+
+
+
+
+
+      // ----------------------------------------------------------------------------------------------------------- LESSON 6
+
+      // What if we only want Amelia to go off if you talk to her more than 3 times?
+      // This is where we can take advantage of the fact that packages can have a number as a value.
+
+      #AmeliaCount
+          // Here is a new Action: "setadd". This action takes what's currently inside the package and adds to it. In this case, we're just adding 1 every time.
+          // If this is the first time we've talked to Amelia, ameliaTalkCount will now = 1, because numbers are assumed to have a default value of 0.
+          setadd ameliaTalkCount 1
+
+          // Here is a new Action: "show". It lets us print the value of a package to chat for testing purposes.
+          show ameliaTalkCount
+
+          // Here is a new form of if statement: if [package]|[operator]|[package or number to compare to]
+          // Note the pipe symbol separating these arguments instead of a space.
+          if ameliaTalkCount|>|3 jump #AmeliaTrouble
+          // We check if ameliaTalkCount is greater than 3. Meaning if you talk to her more than 3 times, it will always jump to #AmeliaTrouble.
+
+          // > is just one of the possible comparison operators we can use in an if statement for numbers. The others are as follows:
+          // >= for greater than or equal to
+          // <  for less than
+          // <= for less than or equal to
+          // =  for equal to
+
+          cmd tempblock air {MBCoords}
+          msg &oAmelia: &xHey there, welcome!
+          delay msgDelay
+
+          // Let's have Amelia tell you how many times you've talked to her.
+          set pluralOrSingular times
+          if ameliaTalkCount|=|1 set pluralOrSingular time
+          msg &oAmelia: &xYou've talked to me {ameliaTalkCount} {pluralOrSingular}.
+          // I set up a package here to ensure that the grammar is correct ("time" for 1, and "times" for anything else). Then unwrapped it into the message.
+
+          delay msgDelay
+          msg &oAmelia: &xTo get to the rest of the server you'll need to &bfly to the top of the tower &xby using &bhax&x.
+          delay msgDelay
+          msg &oAmelia: %bClick the sign %xover there to learn how %bhax %xworks.
+          delay 1000
+          cmd tempblock speech {MBCoords}
+      quit
+
+
+
+
+
+      // ----------------------------------------------------------------------------------------------------------- LESSON 7
+
+      // What if we want Amelia to give you an item?
+
+      #AmeliaItem
+          cmd tempblock air {MBCoords}
+          msg &oAmelia: &xTake this, it's dangerous to go alone...
+          delay msgDelay
+          // Here is a new Action: "item". It works like: item [get/take] [ITEM_NAME]
+          // If you try to give an item you already have, or take an item you don't have, no message is displayed.
+          item get SWORD
+          delay 1000
+          cmd tempblock speech {MBCoords}
+      quit
+
+
+
+
+
+      // ----------------------------------------------------------------------------------------------------------- LESSON 8
+
+      // What if we want Amelia to say something else after you already have the item?
+      // Introducing another form of if statement: if item [ITEM_NAME] [Action]
+      // Items are NOT interchangeable with packages and therefore we must specify the item keyword in the if statement.
+
+      #AmeliaItem2
+          if item SWORD jump #AmeliaDone
+          cmd tempblock air {MBCoords}
+          msg &oAmelia: &xTake this, it's dangerous to go alone...
+          delay msgDelay
+          item get SWORD
+          delay 1000
+          cmd tempblock speech {MBCoords}
+      quit
+
+      #AmeliaDone
+          cmd tempblock air {MBCoords}
+          msg &oAmelia: &xGood luck, Hero!
+          delay 1000
+          cmd tempblock speech {MBCoords}
+      quit
+
+      // Congratulations, you've reached the end of the example tutorial!
+      // However there are still more things to know! For example, you can use "ifnot" instead of "if" for if statements to reverse the logic.
+      // For all of the possible Actions as well as more sick information, head over to the documentation.nas file.
+      ```
+    </pre>
+  </body>
+</html>
