@@ -11,7 +11,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "highlight.js": "11.11.1",
+    "highlight.js": "11.11.2",
     "marked": "17.0.6",
     "marked-highlight": "2.2.4",
     "strip-indent": "4.1.1"
